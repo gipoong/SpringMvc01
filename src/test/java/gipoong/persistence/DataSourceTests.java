@@ -1,4 +1,4 @@
-package gipoong.sample;
+package gipoong.persistence;
 
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
@@ -8,22 +8,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.assertNotNull;
+import javax.sql.DataSource;
+import java.sql.Connection;
+
+import static org.junit.Assert.fail;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("file:web/WEB-INF/applicationContext.xml")
 @Log4j
-public class SampleTests {
+public class DataSourceTests {
 
     @Setter(onMethod_ = {@Autowired})
-    private Restaurant restaurant;
+    private DataSource dataSource;
 
     @Test
-    public void testExist(){
-        assertNotNull(restaurant);
-
-        log.info(restaurant);
-        log.info("-------------------------");
-        log.info(restaurant.getChef());
+    public void testConnection(){
+        try(Connection con = dataSource.getConnection()){
+            log.info(con);
+        }catch(Exception e){
+            fail(e.getMessage());
+        }
     }
 }
